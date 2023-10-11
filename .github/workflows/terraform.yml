@@ -47,10 +47,11 @@ jobs:
 
     - name: Show GH vars
       run: |
+        echo ${{ github.event.ref }}
         echo ${{ github.event_name }}
         echo ${{ github.event.action }}
         echo ${{ github.event.pull_request.merged }}
-        
+
     - name: Terraform Apply
-      if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+      if: github.event_name == 'push' && github.event.ref == 'refs/heads/main'
       run: terraform apply tfplan -auto-approve -input=false
