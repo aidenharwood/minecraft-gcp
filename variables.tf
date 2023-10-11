@@ -8,7 +8,7 @@ variable "zone" {
   default = "us-central1-a"
 }
 variable "image" {
-  default = "debian-cloud/debian-9"
+  default = "debian-cloud/debian-12"
 }
 variable "machine_type" {
   default = "e2-micro"

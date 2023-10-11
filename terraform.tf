@@ -18,6 +18,7 @@ resource "google_compute_instance" "server" {
             nat_ip = google_compute_address.ip.address
         }
     }
+    metadata_startup_script = file("scripts/setup_minecraft.sh")
 }
 
 resource "google_compute_address" "ip" {
