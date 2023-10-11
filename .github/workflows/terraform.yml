@@ -45,8 +45,6 @@ jobs:
     - name: Terraform Plan
       run: terraform plan -input=false -out=tfplan -var='project=${{ secrets.GCP_PROJECT }}' -var='region=${{ secrets.GCP_REGION }}' -var='zone=${{ secrets.GCP_ZONE }}'
 
-      # On push to "main", build or change infrastructure according to Terraform configuration files
-      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/main' && github.event_name == 'pull_request' && github.event.pull_request.merged == true
       run: terraform apply -auto-approve -input=false -plan=tfplan
