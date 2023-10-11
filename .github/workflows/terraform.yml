@@ -46,7 +46,7 @@ name: 'Terraform'
 
 on:
   push:
-    branches: *
+    branches: "*"
   pull_request:
 
 permissions:
@@ -68,11 +68,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: GCP Auth
+      uses: google-github-actions/auth@v0.2.0
+      with:
+        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
-      with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+    - name: Generate Terraform var arguments
+      id: gen-args
+      run: |
+        echo "vars=\"" >> "$GITHUB_OUTPUT"
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -84,10 +92,10 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform plan -input=false
+      run: terraform plan -input=false -out=tfplan -var='project=${{ secrets.GCP_PROJECT }}' -var='region=${{ secrets.GCP_REGION }}' -var='zone=${{ secrets.GCP_ZONE }}'
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false
+      run: terraform apply -auto-approve -input=false -plan=tfplan
