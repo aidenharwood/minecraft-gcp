@@ -13,5 +13,7 @@ wget -O server.jar https://launcher.mojang.com/v1/objects/$(curl -s https://laun
 # Accept the Minecraft EULA
 echo "eula=true" > eula.txt
 
+# Do any mod setup here
+
 # Start the Minecraft server in a screen session
 screen -S minecraft -dm java -Xmx1024M -Xms1024M -jar server.jar nogui
