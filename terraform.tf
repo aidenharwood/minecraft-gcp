@@ -13,7 +13,7 @@ resource "google_compute_instance" "server" {
         }
     }
     network_interface {
-        network = google_compute_network.vpc_network.name
+        network = "default"
         access_config {
             nat_ip = google_compute_address.ip.address
         }
