@@ -13,3 +13,6 @@ variable "image" {
 variable "machine_type" {
   default = "e2-micro"
 }
+variable "server_port" {
+  default = 25565
+}

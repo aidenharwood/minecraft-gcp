@@ -32,11 +32,6 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
-    - name: Generate Terraform var arguments
-      id: gen-args
-      run: |
-        echo "vars=\"" >> "$GITHUB_OUTPUT"
-
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform init --backend-config="bucket=${{ secrets.GCP_BACKEND_BUCKET }}" --backend-config="prefix=${{ secrets.GCP_BACKEND_PREFIX }}" -input=false
