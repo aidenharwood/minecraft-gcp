@@ -1,8 +1,3 @@
-resource "google_project_service" "project" {
-    project = var.project
-    service = "compute.googleapis.com"  
-}
-
 resource "google_compute_instance" "server" {
     name         = "minecraft-server"
     machine_type = var.machine_type
