@@ -1,58 +1,79 @@
 #!/bin/bash
 
-# BEGIN: 8f1j4d9c3j2
-#!/bin/bash
+$MOUNT = "/mnt/minecraft"
 
-# Check if /mnt/minecraft is mounted
-if ! mountpoint -q /mnt/minecraft; then
+# Check if $MOUNT is mounted
+if ! mountpoint -q $MOUNT; then
     # Identify disks
     DISKS=($(lsblk -dpno NAME,SIZE,TYPE,MOUNTPOINT | grep -E 'disk *$' | awk '{print $1}'))
 
     # Check each disk for partitions
     for DISK in "${DISKS[@]}"; do
         # Check if there are partitions on the disk
-        PARTITIONS=$(lsblk -dplno NAME,TYPE ${DISK} | grep part | wc -l)
+        PARTITIONS=$(lsblk -dplno NAME,TYPE $DISK | grep part | wc -l)
         
         if [ "${PARTITIONS}" -eq "0" ]; then
-            echo "Found unpartitioned disk: ${DISK}"
+            echo "Found unpartitioned disk: $DISK"
             
             # Formatting the disk to ext4
-            echo "Formatting ${DISK} to ext4..."
-            mkfs.ext4 "${DISK}"
+            echo "Formatting $DISK to ext4..."
+            mkfs.ext4 "$DISK"
             
-            # Mount to /mnt/minecraft
-            echo "Mounting ${DISK} to /mnt/minecraft..."
-            mount "${DISK}" /mnt/minecraft
+            # Mount to $MOUNT
+            echo "Mounting $DISK to $MOUNT..."
+            mount "$DISK" $MOUNT
 
             # Add to fstab
             echo "Adding to /etc/fstab..."
-            echo "${DISK}  /mnt/minecraft  ext4  defaults  0  2" >> /etc/fstab
+            echo "{DISK  $MOUNT  ext4  defaults  0  2" >> /etc/fstab
 
             echo "Done."
         fi
     done
 fi
 
-echo "No unpartitioned disks found."
-
 # Update the package list and install dependencies
 sudo apt-get update
-sudo apt-get install -y default-jdk screen jq
+sudo apt-get install -y default-jdk screen jq git
 
-# Create a directory for the Minecraft server
-cd /mnt/minecraft
+if mountpoint -q $MOUNT; then
+    # Create a directory for the Minecraft server
+    cd $MOUNT
 
-jarUrl=$(curl -s https://launchermeta.mojang.com/mc/game/version_manifest.json \
-    | jq -r '.latest.release as $release | .versions[] | select(.id==$release) | .url' \
-    | while read -r url; do curl -s $url; done \
-    | jq -r '.downloads.server.url')
+    # Fetch the latest Minecraft version supported by PaperMC
+    MC_VERSION=$(curl -s https://papermc.io/api/v2/projects/paper | jq -r '.versions[-1]')
 
-# Download the Minecraft server jar file
-wget -O server.jar $jarUrl
-# Accept the Minecraft EULA
-echo "eula=true" > eula.txt
+    # Check if the version was successfully retrieved
+    if [ -z "$MC_VERSION" ]; then
+        echo "Failed to retrieve the latest Minecraft version supported by PaperMC."
+        exit 1
+    fi
 
-# Do any mod setup here
+    # Get the latest build number for the fetched MC version
+    BUILD_NUMBER=$(curl -s https://papermc.io/api/v2/projects/paper/versions/${MC_VERSION} | jq -r '.builds[-1]')
 
-# Start the Minecraft server in a screen session
-screen -S minecraft -dm java -Xmx2G -Xms2G -jar server.jar nogui
+    # Check if the build number was successfully retrieved
+    if [ -z "$BUILD_NUMBER" ]; then
+        echo "Failed to retrieve the latest build number for Minecraft version ${MC_VERSION}."
+        exit 1
+    fi
+
+    # Download the latest PaperMC server JAR for the fetched MC version and build number
+    DOWNLOAD_URL="https://papermc.io/api/v2/projects/paper/versions/${MC_VERSION}/builds/${BUILD_NUMBER}/downloads/paper-${MC_VERSION}-${BUILD_NUMBER}.jar"
+    curl -o paper-latest.jar $DOWNLOAD_URL
+
+    # Check if the JAR file was successfully downloaded
+    if [ $? -eq 0 ]; then
+        echo "Successfully downloaded the latest PaperMC server JAR for Minecraft version ${MC_VERSION}."
+        # Accept the Minecraft EULA
+        echo "eula=true" > eula.txt
+
+        # Do any mod setup here
+
+        # Start the Minecraft server in a screen session
+        screen -S minecraft -dm java -Xmx2G -Xms2G -jar paper-latest.jar nogui
+    else
+        echo "Failed to download the PaperMC server JAR."
+        exit 1
+    fi
+fi
