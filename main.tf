@@ -6,7 +6,7 @@ resource "google_compute_instance" "server" {
     tags = [ "minecraft" ]
     
     boot_disk {
-        source = google_compute_disk.boot
+        source = google_compute_disk.boot.self_link
     }
 
     network_interface {
