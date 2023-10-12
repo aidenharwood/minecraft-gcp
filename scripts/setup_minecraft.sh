@@ -23,9 +23,11 @@ if ! mountpoint -q $MOUNT; then
             echo "Mounting $DISK to $MOUNT..."
             mount "$DISK" $MOUNT
 
+            UUID=$(blkid -s UUID -o value $DISK)
+
             # Add to fstab
             echo "Adding to /etc/fstab..."
-            echo "{DISK  $MOUNT  ext4  defaults  0  2" >> /etc/fstab
+            echo "$DISK  $MOUNT  ext4  defaults  0  2" >> /etc/fstab
 
             echo "Done."
         fi
