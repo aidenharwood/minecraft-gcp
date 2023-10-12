@@ -26,13 +26,26 @@ resource "google_compute_instance" "server" {
     allow_stopping_for_update = true
 }
 
-resource "google_compute_firewall" "firewall" {
-    name    = "allow-minecraft"
+resource "google_compute_firewall" "firewall_java" {
+    name    = "allow-minecraft-java"
     network = "default"
 
     allow {
         protocol = "tcp"
-        ports    = [var.server_port]
+        ports    = [var.server_java_port]
+    }
+
+    source_ranges = ["0.0.0.0/0"]
+    target_tags = [ "minecraft" ]
+}
+
+resource "google_compute_firewall" "firewall_bedrock" {
+    name    = "allow-minecraft-bedrock"
+    network = "default"
+
+    allow {
+        protocol = "tcp"
+        ports    = [var.server_bedrock_port]
     }
 
     source_ranges = ["0.0.0.0/0"]

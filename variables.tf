@@ -13,8 +13,11 @@ variable "image" {
 variable "network_tier" {
   default = "STANDARD"
 }
-variable "server_port" {
+variable "server_java_port" {
   default = 25565
+}
+variable "server_bedrock_port" {
+  default = 19132
 }
 variable "vm_cores" {
   default = 1
