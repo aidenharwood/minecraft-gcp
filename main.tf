@@ -20,6 +20,8 @@ resource "google_compute_instance" "server" {
     }
 
     metadata_startup_script = file("scripts/setup_minecraft.sh")
+
+    allow_stopping_for_update = true
 }
 
 resource "google_compute_firewall" "minecraft" {
