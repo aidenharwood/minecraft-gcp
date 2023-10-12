@@ -1,6 +1,6 @@
 #!/bin/bash
 
-$MOUNT = "/mnt/minecraft"
+MOUNT="/mnt/minecraft"
 
 # Check if $MOUNT is mounted
 if ! mountpoint -q $MOUNT; then
@@ -17,10 +17,10 @@ if ! mountpoint -q $MOUNT; then
             
             # Formatting the disk to ext4
             echo "Formatting $DISK to ext4..."
-            mkfs.ext4 "$DISK"
             
             # Mount to $MOUNT
             echo "Mounting $DISK to $MOUNT..."
+            [ ! -d $MOUNT ] && mkdir -p $MOUNT
             mount "$DISK" $MOUNT
 
             UUID=$(blkid -s UUID -o value $DISK)
