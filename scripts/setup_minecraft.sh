@@ -17,6 +17,7 @@ if ! mountpoint -q $MOUNT; then
             
             # Formatting the disk to ext4
             echo "Formatting $DISK to ext4..."
+            mkfs.ext4 -F "$DISK"
             
             # Mount to $MOUNT
             echo "Mounting $DISK to $MOUNT..."
@@ -36,7 +37,7 @@ fi
 
 # Update the package list and install dependencies
 sudo apt-get update
-sudo apt-get install -y default-jdk screen jq git
+sudo apt-get install -y default-jdk screen jq git htop
 
 if mountpoint -q $MOUNT; then
     # Create a directory for the Minecraft server
