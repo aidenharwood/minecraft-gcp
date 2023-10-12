@@ -15,6 +15,7 @@ resource "google_compute_instance" "server" {
         network = "default"
         access_config {
             nat_ip = google_compute_address.ip.address
+            network_tier = var.network_tier
         }
     }
 }
