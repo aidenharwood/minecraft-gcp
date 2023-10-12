@@ -28,6 +28,12 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
+      - name: Get service account email
+        id: service_account_email
+        run: |
+          EMAIL=$(gcloud config get-value account --format="value(core.account)")
+          echo "email=$EMAIL" >> $GITHUB_OUTPUTS
+
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
@@ -43,6 +49,7 @@ jobs:
       - name: Terraform Plan
         run: |
           terraform plan -out=tfplan \
+            -var='service_account_email=${{ steps.service_account_email.outputs.email }}' \
             -var='project=${{ secrets.GCP_PROJECT }}' \
             -var='region=${{ secrets.GCP_REGION }}' \
             -var='zone=${{ secrets.GCP_ZONE }}'
@@ -52,5 +59,27 @@ jobs:
         run: terraform apply --auto-approve "tfplan"
 
       - name: Terraform Output
+        id: outputs
         if: github.event_name == 'push' && github.event.ref == 'refs/heads/main'
-        run: terraform output -json
+        run: |
+          JSON=$(terraform output -json)
+          IP=$($JSON | jq -r .ip.value)
+          INSTANCE_NAME=$($JSON | jq -r .instance_name.value)
+          INSTANCE_USER=$($JSON | jq -r .instance_user.value)
+          echo "ip=$IP" >> $GITHUB_OUTPUT
+          echo "instance_name=$INSTANCE_NAME" >> $GITHUB_OUTPUT
+          echo "instance_user=$INSTANCE_USER" >> $GITHUB_OUTPUT
+          
+      # - name: Copy plugins to VM
+      #   if: github.event_name == 'push' && github.event.ref == 'refs/heads/main'
+      #   run: |
+      #     printf | gcloud compute scp --recurse ./setup/ \
+      #     ${{ steps.outputs.outputs.instance_user }}@${{ steps.outputs.outputs.instance_name }}:/mnt/minecraft/
+
+      # - name: Run Minecraft server on VM
+      #   uses: 'google-github-actions/ssh-compute@v0'
+      #   with:
+      #     instance_name: 'example-instance'
+      #     zone: 'us-central1-a'
+      #     ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
+      #     command: 'echo Hello world'

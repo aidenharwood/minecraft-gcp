@@ -1,3 +1,6 @@
+variable "service_account_email" {
+  default = null
+}
 variable "project" {
   default = "my-project"
 }
