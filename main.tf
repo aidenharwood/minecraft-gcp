@@ -21,7 +21,12 @@ resource "google_compute_instance" "server" {
         source = google_compute_disk.storage.self_link
     }
 
-    metadata_startup_script = file("scripts/setup_minecraft.sh")
+    service_account {
+        scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+        email = var.service_account_email
+    }
+
+    metadata_startup_script = file("scripts/setup.sh")
 
     allow_stopping_for_update = true
 }

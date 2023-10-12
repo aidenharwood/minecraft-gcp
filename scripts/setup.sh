@@ -1,6 +1,6 @@
 #!/bin/bash
-
 MOUNT="/mnt/minecraft"
+PLUGINS="/mnt/minecraft/plugins"
 
 # Check if $MOUNT is mounted
 if ! mountpoint -q $MOUNT; then
@@ -17,7 +17,7 @@ if ! mountpoint -q $MOUNT; then
             
             # Formatting the disk to ext4
             echo "Formatting $DISK to ext4..."
-            mkfs.ext4 -F "$DISK"
+            mkfs.ext4 "$DISK"
             
             # Mount to $MOUNT
             echo "Mounting $DISK to $MOUNT..."
@@ -31,9 +31,10 @@ fi
 
 # Update the package list and install dependencies
 sudo apt-get update
-sudo apt-get install -y default-jdk screen jq git htop
+sudo apt-get install -y default-jdk screen jq git htop unzip
 
-if mountpoint -q $MOUNT; then
+# Check if drive is mounted and if java is not running
+if mountpoint -q $MOUNT && ! pgrep java > /dev/null; then
     # Create a directory for the Minecraft server
     cd $MOUNT
 
@@ -65,11 +66,7 @@ if mountpoint -q $MOUNT; then
         # Accept the Minecraft EULA
         echo "eula=true" > eula.txt
 
-        # Do any mod setup here
-        #!/bin/bash
-
-        # Navigate to the plugins directory
-        cd /path/to/plugins/directory
+        [ ! -d $PLUGINS ] && mkdir -p $PLUGINS
 
         # Download the latest version of the Geyser plugin
         curl -o plugins/geyser.jar https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar
