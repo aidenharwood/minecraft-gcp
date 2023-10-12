@@ -1,1 +1,2 @@
-machine_type = "e2-medium"
+vm_cores = 1
+vm_memory = 4

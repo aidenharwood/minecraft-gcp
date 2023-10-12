@@ -10,12 +10,21 @@ variable "zone" {
 variable "image" {
   default = "debian-cloud/debian-12"
 }
-variable "machine_type" {
-  default = "e2-micro"
-}
 variable "network_tier" {
   default = "STANDARD"
 }
 variable "server_port" {
   default = 25565
+}
+variable "vm_cores" {
+  default = 1
+}
+variable "vm_memory" {
+  default = 1
+}
+variable "vm_disk_size" {
+  default = 10
+}
+variable "vm_boot_disk_size" {
+  default = 10
 }
