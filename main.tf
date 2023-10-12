@@ -32,7 +32,20 @@ resource "google_compute_firewall" "firewall" {
 
     allow {
         protocol = "tcp"
-        ports    = [var.server_port]
+        ports    = [var.server_java_port]
+    }
+
+    source_ranges = ["0.0.0.0/0"]
+    target_tags = [ "minecraft" ]
+}
+
+resource "google_compute_firewall" "firewall" {
+    name    = "allow-minecraft"
+    network = "default"
+
+    allow {
+        protocol = "tcp"
+        ports    = [var.server_bedrock_port]
     }
 
     source_ranges = ["0.0.0.0/0"]

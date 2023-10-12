@@ -24,12 +24,6 @@ if ! mountpoint -q $MOUNT; then
             [ ! -d $MOUNT ] && mkdir -p $MOUNT
             mount "$DISK" $MOUNT
 
-            UUID=$(blkid -s UUID -o value $DISK)
-
-            # Add to fstab
-            echo "Adding to /etc/fstab..."
-            echo "$DISK  $MOUNT  ext4  defaults  0  2" >> /etc/fstab
-
             echo "Done."
         fi
     done
@@ -72,6 +66,19 @@ if mountpoint -q $MOUNT; then
         echo "eula=true" > eula.txt
 
         # Do any mod setup here
+        #!/bin/bash
+
+        # Navigate to the plugins directory
+        cd /path/to/plugins/directory
+
+        # Download the latest version of the Geyser plugin
+        curl -o plugins/geyser.jar https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar
+
+        # Download the latest version of the Floodgates plugin
+        curl -o plugins/floodgates.jar https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar
+
+        # Download the latest version of the mcMMO plugin
+        curl -o plugins/mcmmo.jar https://popicraft.net/jenkins/job/mcMMO/lastSuccessfulBuild/artifact/target/mcMMO.jar
 
         # Start the Minecraft server in a screen session
         screen -S minecraft -dm java -Xmx2G -Xms2G -jar paper-latest.jar nogui
