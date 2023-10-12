@@ -34,11 +34,16 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform init --backend-config="bucket=${{ secrets.GCP_BACKEND_BUCKET }}" --backend-config="prefix=${{ secrets.GCP_BACKEND_PREFIX }}" -input=false
+      run: terraform init \
+        --backend-config="bucket=${{ secrets.GCP_BACKEND_BUCKET }}" \
+        --backend-config="prefix=${{ secrets.GCP_BACKEND_PREFIX }}"
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform plan -out=tfplan -var='project=${{ secrets.GCP_PROJECT }}' -var='region=${{ secrets.GCP_REGION }}' -var='zone=${{ secrets.GCP_ZONE }}'
+      run: terraform plan -out=tfplan \
+        -var='project=${{ secrets.GCP_PROJECT }}' \
+        -var='region=${{ secrets.GCP_REGION }}' \
+        -var='zone=${{ secrets.GCP_ZONE }}'
 
     - name: Terraform Apply
       if: github.event_name == 'push' && github.event.ref == 'refs/heads/main'

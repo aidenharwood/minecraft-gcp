@@ -22,7 +22,7 @@ resource "google_compute_instance" "server" {
     allow_stopping_for_update = true
 }
 
-resource "google_compute_firewall" "minecraft" {
+resource "google_compute_firewall" "firewall" {
     name    = "allow-minecraft"
     network = "default"
 
@@ -52,4 +52,9 @@ resource "google_compute_disk" "storage" {
     name = "minecraft-storage-disk"
     type = "pd-balanced"
     size = var.vm_disk_size
+}
+
+resource "google_compute_attached_disk" "storage" {
+    disk = google_compute_disk.storage.id
+    instance = google_compute_instance.server.id
 }
