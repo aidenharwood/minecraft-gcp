@@ -16,6 +16,10 @@ resource "google_compute_instance" "server" {
             network_tier = var.network_tier
         }
     }
+    
+    attached_disk {
+        source = google_compute_disk.storage.self_link
+    }
 
     metadata_startup_script = file("scripts/setup_minecraft.sh")
 
@@ -52,9 +56,4 @@ resource "google_compute_disk" "storage" {
     name = "minecraft-storage-disk"
     type = "pd-balanced"
     size = var.vm_disk_size
-}
-
-resource "google_compute_attached_disk" "storage" {
-    disk = google_compute_disk.storage.id
-    instance = google_compute_instance.server.id
 }
