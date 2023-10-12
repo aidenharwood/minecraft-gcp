@@ -40,13 +40,6 @@ jobs:
     - name: Terraform Plan
       run: terraform plan -out=tfplan -var='project=${{ secrets.GCP_PROJECT }}' -var='region=${{ secrets.GCP_REGION }}' -var='zone=${{ secrets.GCP_ZONE }}'
 
-    - name: Show GH vars
-      run: |
-        echo ${{ github.event.ref }}
-        echo ${{ github.event_name }}
-        echo ${{ github.event.action }}
-        echo ${{ github.event.pull_request.merged }}
-
     - name: Terraform Apply
       if: github.event_name == 'push' && github.event.ref == 'refs/heads/main'
       run: terraform apply --auto-approve "tfplan"
