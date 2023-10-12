@@ -50,9 +50,7 @@ jobs:
         run: |
           terraform plan -out=tfplan \
             -var='service_account_email=${{ steps.service_account_email.outputs.email }}' \
-            -var='project=${{ secrets.GCP_PROJECT }}' \
-            -var='region=${{ secrets.GCP_REGION }}' \
-            -var='zone=${{ secrets.GCP_ZONE }}'
+            -var='project=${{ secrets.GCP_PROJECT }}'
 
       - name: Terraform Apply
         if: github.event_name == 'push' && github.event.ref == 'refs/heads/main'
