@@ -18,6 +18,8 @@ resource "google_compute_instance" "server" {
             network_tier = var.network_tier
         }
     }
+
+    metadata_startup_script = file("scripts/setup_minecraft.sh")
 }
 
 resource "google_compute_firewall" "minecraft" {
