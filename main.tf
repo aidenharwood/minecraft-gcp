@@ -34,5 +34,6 @@ resource "google_compute_firewall" "minecraft" {
 
 resource "google_compute_address" "ip" {
     name = "minecraft-ip"
-    region = var.region    
+    region = var.region
+    network_tier = var.network_tier
 }
