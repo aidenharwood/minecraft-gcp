@@ -13,6 +13,9 @@ variable "image" {
 variable "machine_type" {
   default = "e2-micro"
 }
+variable "network_tier" {
+  default = "STANDARD"
+}
 variable "server_port" {
   default = 25565
 }
