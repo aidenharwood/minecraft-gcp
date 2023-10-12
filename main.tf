@@ -1,7 +1,6 @@
 resource "google_compute_instance" "server" {
     name         = "minecraft-server"
     machine_type = local.machine_type
-    zone         = var.zone
 
     tags = [ "minecraft" ]
     
