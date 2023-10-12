@@ -26,8 +26,8 @@ resource "google_compute_instance" "server" {
     allow_stopping_for_update = true
 }
 
-resource "google_compute_firewall" "firewall" {
-    name    = "allow-minecraft"
+resource "google_compute_firewall" "firewall_java" {
+    name    = "allow-minecraft-java"
     network = "default"
 
     allow {
@@ -39,8 +39,8 @@ resource "google_compute_firewall" "firewall" {
     target_tags = [ "minecraft" ]
 }
 
-resource "google_compute_firewall" "firewall" {
-    name    = "allow-minecraft"
+resource "google_compute_firewall" "firewall_bedrock" {
+    name    = "allow-minecraft-bedrock"
     network = "default"
 
     allow {

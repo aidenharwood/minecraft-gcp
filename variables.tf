@@ -16,7 +16,7 @@ variable "network_tier" {
 variable "server_java_port" {
   default = 25565
 }
-variable "server_java_port" {
+variable "server_bedrock_port" {
   default = 19132
 }
 variable "vm_cores" {
