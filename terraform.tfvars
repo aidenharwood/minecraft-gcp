@@ -1,2 +1,2 @@
-vm_cores = 1
-vm_memory = 4
+vm_cores = 2
+vm_memory = 3
