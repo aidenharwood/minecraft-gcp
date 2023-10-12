@@ -32,7 +32,7 @@ jobs:
         id: service_account_email
         run: |
           EMAIL=$(gcloud config get-value account --format="value(core.account)")
-          echo "email=$EMAIL" >> $GITHUB_OUTPUTS
+          echo "email=$EMAIL" >> $GITHUB_OUTPUT
 
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
