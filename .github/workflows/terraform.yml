@@ -1,4 +1,4 @@
-name: 'Terraform'
+name: "Terraform"
 
 on:
   - push
@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: "Terraform"
     runs-on: ubuntu-latest
     environment: production
 
@@ -19,36 +19,38 @@ jobs:
         shell: bash
 
     steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v3
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: GCP Auth
-      uses: google-github-actions/auth@v1
-      with:
-        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+      - name: GCP Auth
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
 
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform Init
-      run: terraform init \
-        --backend-config="bucket=${{ secrets.GCP_BACKEND_BUCKET }}" \
-        --backend-config="prefix=${{ secrets.GCP_BACKEND_PREFIX }}"
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        run: |
+          terraform init \
+            --backend-config="bucket=${{ secrets.GCP_BACKEND_BUCKET }}" \
+            --backend-config="prefix=${{ secrets.GCP_BACKEND_PREFIX }}"
 
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      run: terraform plan -out=tfplan \
-        -var='project=${{ secrets.GCP_PROJECT }}' \
-        -var='region=${{ secrets.GCP_REGION }}' \
-        -var='zone=${{ secrets.GCP_ZONE }}'
+      # Generates an execution plan for Terraform
+      - name: Terraform Plan
+        run: |
+          terraform plan -out=tfplan \
+            -var='project=${{ secrets.GCP_PROJECT }}' \
+            -var='region=${{ secrets.GCP_REGION }}' \
+            -var='zone=${{ secrets.GCP_ZONE }}'
 
-    - name: Terraform Apply
-      if: github.event_name == 'push' && github.event.ref == 'refs/heads/main'
-      run: terraform apply --auto-approve "tfplan"
-    
-    - name: Terraform Output
-      if: github.event_name == 'push' && github.event.ref == 'refs/heads/main'
-      run: terraform output -json
+      - name: Terraform Apply
+        if: github.event_name == 'push' && github.event.ref == 'refs/heads/main'
+        run: terraform apply --auto-approve "tfplan"
+
+      - name: Terraform Output
+        if: github.event_name == 'push' && github.event.ref == 'refs/heads/main'
+        run: terraform output -json
