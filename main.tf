@@ -63,6 +63,10 @@ resource "google_compute_disk" "boot" {
     type = "pd-balanced"
     size = var.vm_boot_disk_size
     image = data.google_compute_image.image.self_link
+
+    lifecycle {
+      prevent_destroy = true
+    }
 }
 
 resource "google_compute_resource_policy" "daily_backup_policy" {

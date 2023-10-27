@@ -1,5 +1,5 @@
 #!/bin/bash
-MOUNT="/etc/minecraft"
+SERVER_FOLDER="/etc/minecraft"
 PLUGINS="/etc/minecraft/plugins"
 
 # Update the package list and install dependencies
@@ -9,7 +9,7 @@ sudo apt-get install -y default-jdk screen jq git htop unzip
 # Check if if java is not running
 if ! pgrep java > /dev/null; then
     # Create a directory for the Minecraft server
-    cd $MOUNT
+    cd $SERVER_FOLDER
 
     # Fetch the latest Minecraft version supported by PaperMC
     MC_VERSION=$(curl -s https://papermc.io/api/v2/projects/paper | jq -r '.versions[-1]')
@@ -39,7 +39,7 @@ if ! pgrep java > /dev/null; then
         # Accept the Minecraft EULA
         echo "eula=true" > eula.txt
 
-        [ ! -d $PLUGINS ] && mkdir -p $PLUGINS
+        [ ! -d $PLUGINS_FOLDER ] && mkdir -p $PLUGINS_FOLDER
 
         # Download the latest version of the Geyser plugin
         curl -o plugins/geyser.jar https://ci.opencollab.dev/job/GeyserMC/job/Geyser/job/master/lastSuccessfulBuild/artifact/bootstrap/spigot/build/libs/Geyser-Spigot.jar
