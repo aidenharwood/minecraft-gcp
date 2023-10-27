@@ -1,33 +1,6 @@
 #!/bin/bash
-MOUNT="/mnt/minecraft"
-PLUGINS="/mnt/minecraft/plugins"
-
-# Check if $MOUNT is mounted
-if ! mountpoint -q $MOUNT; then
-    # Identify disks
-    DISKS=($(lsblk -dpno NAME,SIZE,TYPE,MOUNTPOINT | grep -E 'disk *$' | awk '{print $1}'))
-
-    # Check each disk for partitions
-    for DISK in "${DISKS[@]}"; do
-        # Check if there are partitions on the disk
-        PARTITIONS=$(lsblk -dplno NAME,TYPE $DISK | grep part | wc -l)
-        
-        if [ "${PARTITIONS}" -eq "0" ]; then
-            echo "Found unpartitioned disk: $DISK"
-            
-            # Formatting the disk to ext4
-            echo "Formatting $DISK to ext4..."
-            mkfs.ext4 "$DISK"
-            
-            # Mount to $MOUNT
-            echo "Mounting $DISK to $MOUNT..."
-            [ ! -d $MOUNT ] && mkdir -p $MOUNT
-            mount "$DISK" $MOUNT
-
-            echo "Done."
-        fi
-    done
-fi
+MOUNT="/etc/minecraft"
+PLUGINS="/etc/minecraft/plugins"
 
 # Update the package list and install dependencies
 sudo apt-get update
