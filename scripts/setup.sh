@@ -48,7 +48,12 @@ if ! pgrep java > /dev/null; then
         curl -o plugins/floodgates.jar https://ci.opencollab.dev/job/GeyserMC/job/Floodgate/job/master/lastSuccessfulBuild/artifact/spigot/build/libs/floodgate-spigot.jar
 
         # Download the latest version of the mcMMO plugin
-        curl -o plugins/mcmmo.jar https://popicraft.net/jenkins/job/mcMMO/lastSuccessfulBuild/artifact/target/mcMMO.jar
+        #curl -o plugins/mcmmo.jar https://popicraft.net/jenkins/job/mcMMO/lastSuccessfulBuild/artifact/target/mcMMO.jar
+
+        # Generate the server.properties file
+        java -jar paper-latest.jar --init-settings
+
+        sed -i 's/^motd=.*$/motd=I showed you my boolo cap, please respond!/' server.properties
 
         # Start the Minecraft server in a screen session
         screen -S minecraft -dm java -Xmx2G -Xms2G -jar paper-latest.jar nogui
