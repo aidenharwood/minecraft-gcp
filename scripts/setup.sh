@@ -6,8 +6,8 @@ PLUGINS="/etc/minecraft/plugins"
 sudo apt-get update
 sudo apt-get install -y default-jdk screen jq git htop unzip
 
-# Check if drive is mounted and if java is not running
-if mountpoint -q $MOUNT && ! pgrep java > /dev/null; then
+# Check if if java is not running
+if ! pgrep java > /dev/null; then
     # Create a directory for the Minecraft server
     cd $MOUNT
 
