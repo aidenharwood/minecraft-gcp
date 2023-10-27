@@ -90,3 +90,9 @@ resource "google_compute_resource_policy" "daily_backup_policy" {
     }
   }
 }
+
+resource "google_compute_disk_resource_policy_attachment" "attachment" {
+  name = google_compute_resource_policy.policy.name
+  disk = google_compute_disk.boot.name
+  zone = var.zone
+}
