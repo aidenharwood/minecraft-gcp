@@ -28,6 +28,9 @@ variable "vm_cores" {
 variable "vm_memory" {
   default = 1
 }
+variable "vm_sku" {
+  default = null
+}
 variable "vm_disk_size" {
   default = 10
 }

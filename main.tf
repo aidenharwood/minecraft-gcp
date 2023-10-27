@@ -69,8 +69,28 @@ resource "google_compute_disk" "boot" {
     image = data.google_compute_image.image.self_link
 }
 
-resource "google_compute_disk" "storage" {
-    name = "minecraft-storage-disk"
-    type = "pd-balanced"
-    size = var.vm_disk_size
+resource "google_compute_resource_policy" "daily_backup_policy" {
+  name   = "daily-backup-policy"
+  region = var.region
+  
+  snapshot_schedule_policy {
+    schedule {
+      daily_schedule {
+        days_in_cycle = 1
+        start_time    = "04:00"
+      }
+    }
+
+    retention_policy {
+      max_retention_days    = 3
+      on_source_disk_delete = "KEEP_AUTO_SNAPSHOTS"
+    }
+
+    snapshot_properties {
+      storage_locations = [var.region]
+      labels = {
+        environment = "production"
+      }
+    }
+  }
 }
