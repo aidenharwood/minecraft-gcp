@@ -15,10 +15,6 @@ resource "google_compute_instance" "server" {
             network_tier = var.network_tier
         }
     }
-    
-    attached_disk {
-        source = google_compute_disk.storage.self_link
-    }
 
     service_account {
         scopes = ["userinfo-email", "compute-ro", "storage-ro"]
